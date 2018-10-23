@@ -188,7 +188,37 @@ SELECT * FROM `notify`;
 
 
 
+/* ****************** 3  ************************* */
+/* https://stackoverflow.com/questions/11943163/mysql-trigger-loop-for-query-result-with-many-rows */
 
+DROP TABLE `msg1`;
+DROP TABLE `uu1`;
+
+CREATE TABLE `uu1` (
+ `uid` int,
+ `name` varchar(32)
+);
+
+CREATE TABLE `msg1` (
+ `name`     varchar(32),
+ `message`  varchar(32)
+);
+
+DROP TRIGGER `push1`;
+
+DELIMITER $$
+CREATE trigger `push1` AFTER INSERT ON `uu1`
+    FOR EACH ROW
+        BEGIN
+            SET @ID := NEW.uid,
+                @NM := (SELECT `name` FROM `uu1` WHERE uid = @ID);
+
+            INSERT INTO `msg1` (`name`, `message`) VALUES (@NM, 'Welcome');
+        END; 
+$$
+DELIMITER ;
+
+INSERT INTO `uu1` (`uid`, `name`) VALUES (1, 'tony');
 
 
 /* ******************  2 OK ************************* */
