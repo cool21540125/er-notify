@@ -191,8 +191,49 @@ SELECT * FROM `notify`;
 
 
 
+/* ******************  2  ************************* */
+create table `t11` (
+    `a1` int
+);
 
-/* ******************  OK  ************************* */
+create table `t22` (
+    `a2` varchar(8),
+    `b2` int
+);
+insert into `t22` (`a2`, `b2`) values ('john', 8), ('tony', 14);
+/* drop table `t11`; drop table `t22`; */
+
+DROP TRIGGER `notify`.`demo2`;
+DELIMITER $$
+
+CREATE trigger `demo2` AFTER INSERT ON `t11`
+    FOR EACH ROW
+    BEGIN
+        DECLARE x int;
+        SET x = 0;
+        WHILE x < (SELECT COUNT(1) FROM `t11`) DO
+            INSERT INTO `t22` (`a2`, `b2`) VALUES ('test', x);
+            SET x = x + 1;
+        END WHILE;
+    END; 
+$$
+
+DELIMITER ;
+
+show triggers from `notify`;
+
+select * from `t11`;
+select * from `t22`;
+insert into `t11` values (1);
+select * from `t11`;
+select * from `t22`;
+
+
+delete from `t11`; delete from `t22`;
+
+
+
+/* ******************  1 OK ************************* */
 /*
     https://dev.mysql.com/doc/refman/5.7/en/trigger-syntax.html 
 */
