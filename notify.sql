@@ -22,13 +22,14 @@ GRANT ALL ON `notify`.`*` TO 'admin'@'%';
 /* ************************************************************************* */
 USE `notify`;
 
-DROP TABLE IF EXISTS `severity`;
-DROP TABLE IF EXISTS `evt_type`;
+DROP TABLE IF EXISTS `notify`;
+DROP TABLE IF EXISTS `subscribe`;
 DROP TABLE IF EXISTS `events`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `groups`;
-DROP TABLE IF EXISTS `sub_unit`;
-DROP TABLE IF EXISTS `reports`;
+DROP TABLE IF EXISTS `event_type`;
+DROP TRIGGER IF EXISTS `notifyq`;
+DROP VIEW IF EXISTS `all_notify_view`;
 
 /* ************************************************************************* */
 
@@ -55,6 +56,7 @@ INSERT INTO `event_type` (`etype`, `desc`) VALUES
 /* 2. 推播事件 ********************************** */
 CREATE TABLE `events` (
     `id`                INT                 NOT NULL AUTO_INCREMENT,
+    -- `id`                INT                 NOT NULL,
     `fk_etype`          VARCHAR(16)         NOT NULL,
     `dt`                DATETIME            NOT NULL,
     `content`           VARCHAR(64)         NOT NULL,
@@ -115,22 +117,8 @@ CREATE TABLE `subscribe` (
 
 INSERT INTO `subscribe` (`fk_gid`, `fk_etype`) VALUES 
     (1, 'AA'),
-    (1, 'BB'),
-    (1, 'FF'),
     (2, 'AA'),
     (2, 'BB'),
-    (2, 'FF'),
-    (2, 'GG'),
-    (3, 'AA'),
-    (3, 'BB'),
-    (3, 'CC'),
-    (3, 'DD'),
-    (4, 'DD'),
-    (5, 'AA'),
-    (5, 'BB'),
-    (5, 'CC'),
-    (5, 'EE'),
-    (5, 'GG'),
     (5, 'DD');
 
 /* 6. 通知表 ********************************** */
@@ -150,151 +138,14 @@ CREATE TABLE `notify` (
 */
 
 
-/* TEST TABLE
+/* TEST TABLE 
     drop table d1;
-    create table d1 (iid    int);
+    create table t1 (
+        `fk_evtid`          INT,
+        `username`          VARCHAR(32),
+        `read`              BOOLEAN
+    );
     select * from d1;
 */
 /* notify Trigger ********************************** */
-
-DROP TRIGGER `mark_notify`;
-
-DELIMITER $$
-CREATE TRIGGER `mark_notify` AFTER INSERT ON `events`
-    FOR EACH ROW 
-    BEGIN
-        SET @username := (SELECT `username` FROM `users` WHERE `uid` = 1),
-            @event_id := NEW.id;
-        INSERT INTO `notify` (`fk_evtid`, `username`) VALUES (@event_id, @username);
-    END; 
-$$
-DELIMITER ;
-
-SHOW TRIGGERS FROM `notify`\G;
-
-
-/* 
-    DELETE FROM `notify`;
-    DELETE FROM `events`;
-*/
-
-
-/* 觸發事件 */
-INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('AA', CURRENT_TIMESTAMP(), '警報時間超過4小時');
-
-
-SELECT * FROM `notify`;
-
-
-
-
-/* ****************** 3  ************************* */
-/* https://stackoverflow.com/questions/11943163/mysql-trigger-loop-for-query-result-with-many-rows */
-
-DROP TABLE `msg1`;
-DROP TABLE `uu1`;
-
-CREATE TABLE `uu1` (
- `uid` int,
- `name` varchar(32)
-);
-
-CREATE TABLE `msg1` (
- `name`     varchar(32),
- `message`  varchar(32)
-);
-
-DROP TRIGGER `push1`;
-
-DELIMITER $$
-CREATE trigger `push1` AFTER INSERT ON `uu1`
-    FOR EACH ROW
-        BEGIN
-            SET @ID := NEW.uid,
-                @NM := (SELECT `name` FROM `uu1` WHERE uid = @ID);
-
-            INSERT INTO `msg1` (`name`, `message`) VALUES (@NM, 'Welcome');
-        END; 
-$$
-DELIMITER ;
-
-INSERT INTO `uu1` (`uid`, `name`) VALUES (1, 'tony');
-
-
-/* ******************  2 OK ************************* */
-create table `t11` (
-    `a1` int
-);
-
-create table `t22` (
-    `a2` varchar(8),
-    `b2` int
-);
-insert into `t22` (`a2`, `b2`) values ('john', 8), ('tony', 14);
-/* drop table `t11`; drop table `t22`; */
-
-DROP TRIGGER `notify`.`demo2`;
-DELIMITER $$
-
-CREATE trigger `demo2` AFTER INSERT ON `t11`
-    FOR EACH ROW
-    BEGIN
-        DECLARE x int;
-        SET x = 0;
-        WHILE x < (SELECT COUNT(1) FROM `t11`) DO
-            INSERT INTO `t22` (`a2`, `b2`) VALUES ('test', x);
-            SET x = x + 1;
-        END WHILE;
-    END; 
-$$
-
-DELIMITER ;
-
-show triggers from `notify`;
-
-select * from `t11`;
-select * from `t22`;
-insert into `t11` values (1);
-select * from `t11`;
-select * from `t22`;
-
-
-delete from `t11`; delete from `t22`;
-
-
-
-/* ******************  1 OK ************************* */
-/*
-    https://dev.mysql.com/doc/refman/5.7/en/trigger-syntax.html 
-*/
-
-create table `t1` (
-    `a1` int
-);
-
-create table `t2` (
-    `a2` int
-);
-/* drop table `t1`; drop table `t2`; */
-
-DROP TRIGGER demo1;
-DELIMITER $$
-
-CREATE trigger `demo1` AFTER INSERT ON `t1`
-    FOR EACH ROW
-    BEGIN
-        INSERT INTO `t2` SET `a2` = NEW.a1;
-    END; 
-$$
-
-DELIMITER ;
-
-show triggers from notify;
-
-insert into t1 values(1);
-select * from t1;
-select * from t2;
-
-delete from t1; delete from t2;
-
 
