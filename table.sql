@@ -41,12 +41,11 @@ CREATE TABLE `event_type` (
     etype 的所有事件類型(盡量每種事件類型可以互斥, 並無上下階層之劃分)
 */
 INSERT INTO `event_type` (`etype`, `desc`) VALUES 
-    ('A', '天災'),
-    ('B', '阿共亂射'),
-    ('C', '老美哭妖'),
-    ('D', '不倫戀情'),
-    ('E', '呆灣價值'),
-    ('F', '天下大小事');
+    ('A', '客戶動向'),
+    ('B', '員工動向'),
+    ('C', '產業動向'),
+    ('D', '財務狀況'),
+    ('E', '生產進度');
 
 
 /* 2. 推播事件 ********************************** */
@@ -70,10 +69,9 @@ CREATE TABLE `groups` (
 );
 
 INSERT INTO `groups` (`gid`, `groupname`) VALUES
-    (1, '統治階層'),
-    (2, '權力操弄'),
-    (3, '工作單位'),
-    (4, '洗腦單位');
+    (1, '董事會'),
+    (2, '管理階層'),
+    (3, '勞碌RD');
 
 
 /* 4. USER ********************************** */
@@ -86,19 +84,12 @@ CREATE TABLE `users` (
 );
 
 INSERT INTO `users` (`fk_gid`, `username`) VALUES
-    (1, '菜無感'),
-    (1, '馬阿狗'),
-    (1, '幹話德'),
-    (1, '花錢媽'),
-    (2, '幹話德'),
-    (2, '花錢媽'),
-    (2, '玩世姦'),
-    (3, '鐵血哲'),
-    (3, '胡老賊'),
-    (3, '剪綵倫'),
-    (4, '玩世姦'),
-    (4, '冥視電台'),
-    (4, '陰森電台');
+    (1, 'Mrte'),
+    (1, 'Soph'),
+    (2, 'Frnk'),
+    (3, 'Howr'),
+    (3, 'Tony'),
+    (3, 'Andy');
 
 
 /* 5. 訂閱表 ********************************** */
@@ -113,20 +104,13 @@ CREATE TABLE `subscribe` (
 
 INSERT INTO `subscribe` (`fk_gid`, `fk_etype`) VALUES 
     (1, 'A'),
-    (1, 'B'),
     (1, 'C'),
-    (1, 'E'),
+    (1, 'D'),
+    (2, 'A'),
     (2, 'B'),
-    (2, 'C'),
-    (2, 'D'),
-    (3, 'A'),
-    (3, 'F'),
-    (4, 'A'),
-    (4, 'B'),
-    (4, 'C'),
-    (4, 'D'),
-    (4, 'E'),
-    (4, 'F');
+    (2, 'E'),
+    (3, 'B'),
+    (3, 'E');
 
 /* 6. 通知表 ********************************** */
 CREATE TABLE `notify` (
@@ -140,11 +124,11 @@ CREATE TABLE `notify` (
 
 -- ======================================================================
 
-SELECT * FROM `groups`;
-SELECT * FROM `users`;
-SELECT * FROM `subscribe`;
+-- SELECT * FROM `groups`;
+-- SELECT * FROM `users`;
+-- SELECT * FROM `subscribe`;
 
-SELECT 
-    uu.username `User`, uu.fk_gid `gid`, ss.fk_etype `event type`
-FROM 
-    users uu JOIN subscribe ss ON uu.fk_gid = ss.fk_gid;
+-- SELECT 
+--     uu.username `User`, uu.fk_gid `gid`, ss.fk_etype `event type`
+-- FROM 
+--     users uu JOIN subscribe ss ON uu.fk_gid = ss.fk_gid;

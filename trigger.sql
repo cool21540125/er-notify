@@ -58,34 +58,20 @@ CREATE TRIGGER `notifyq` AFTER INSERT ON `events`
         CLOSE cur1_subscribe;
     END Block1; 
 $$
-
--- Trigger2 - 查月通知紀錄後, 標示已讀
--- CREATE TRIGGER `readnotify` AFTER SELECT ON `notify`
--- FOR EACH ROW 
---     Block1: BEGIN
-
---     END Block1;
--- $$
-
 DELIMITER ;
-
-
 
 -- SHOW TRIGGERS FROM `notify`\G;
 
 -- 觸發事件 ***************************************************************************************************
-INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('A', CURRENT_TIMESTAMP(), '地球史上最強颱風');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('A', CURRENT_TIMESTAMP(), '人類史上最強颱風');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('B', CURRENT_TIMESTAMP(), '繞台灣飛行');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('B', CURRENT_TIMESTAMP(), '轟炸金門');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('C', CURRENT_TIMESTAMP(), '賣狂牛');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('C', CURRENT_TIMESTAMP(), '收保護費');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('D', CURRENT_TIMESTAMP(), '在車上');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('D', CURRENT_TIMESTAMP(), '在旅館');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('E', CURRENT_TIMESTAMP(), '87共識');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('E', CURRENT_TIMESTAMP(), '對岸兩家分');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('F', CURRENT_TIMESTAMP(), '南下車潮');
--- INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('F', CURRENT_TIMESTAMP(), '爆炸');
+
+INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('A', CURRENT_TIMESTAMP(), '新客戶台雞店到手!');
+INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('B', CURRENT_TIMESTAMP(), 'Andy跑去廁所2小時了!');
+INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('B', CURRENT_TIMESTAMP(), 'Howr欺騙公司外籍勞工');
+INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('A', CURRENT_TIMESTAMP(), '與廉墊關係惡化');
+INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('C', CURRENT_TIMESTAMP(), '工業8.7最新消息指出...');
+INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('D', CURRENT_TIMESTAMP(), '公司投資的金融商品暴漲300%');
+INSERT INTO `events` (`fk_etype`, `dt`, `content`) VALUES ('E', CURRENT_TIMESTAMP(), '產品延誤~~ 年底會好嗎?');
+
 -- 觸發事件 ***************************************************************************************************
 
 -- select * from events;
