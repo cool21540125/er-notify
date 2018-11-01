@@ -6,6 +6,9 @@
     assist: Jason
 
     description: Line Message 及 網頁事件推播 的 Table
+
+    ER-Model v0.1
+    版本參考 edition.md
 */
 
 /* ************************************************************************* */
@@ -41,11 +44,11 @@ CREATE TABLE `event_type` (
     etype 的所有事件類型(盡量每種事件類型可以互斥, 並無上下階層之劃分)
 */
 INSERT INTO `event_type` (`etype`, `desc`) VALUES 
-    ('A', '客戶動向'),
-    ('B', '員工動向'),
-    ('C', '產業動向'),
-    ('D', '財務狀況'),
-    ('E', '生產進度');
+    ('fatal', '嚴重異常'),
+    ('error', '中等錯誤'),
+    ('warn', '輕微警告'),
+    ('info', '一般訊息'),
+    ('period', '定時資訊');
 
 
 /* 2. 推播事件 ********************************** */
@@ -103,22 +106,23 @@ CREATE TABLE `subscribe` (
 );
 
 INSERT INTO `subscribe` (`fk_gid`, `fk_etype`) VALUES 
-    (1, 'A'),
-    (1, 'C'),
-    (1, 'D'),
-    (2, 'A'),
-    (2, 'B'),
-    (2, 'E'),
-    (3, 'B'),
-    (3, 'E');
+    (1, 'fatal'),
+    (1, 'error'),
+    (1, 'info'),
+    (2, 'fatal'),
+    (2, 'period'),
+    (2, 'warn'),
+    (3, 'info'),
+    (3, 'period');
 
 /* 6. 通知表 ********************************** */
 CREATE TABLE `notify` (
     `fk_evtid`          INT                 NOT NULL,
-    `username`          VARCHAR(32)         NOT NULL,
+    `fk_uid`            INT                 NOT NULL,
     `read`              BOOLEAN,
-    PRIMARY KEY (`fk_evtid`, `username`),
-    FOREIGN KEY (`fk_evtid`)                  REFERENCES `events` (`id`)
+    PRIMARY KEY (`fk_evtid`, `fk_uid`),
+    FOREIGN KEY (`fk_evtid`)                  REFERENCES `events` (`id`),
+    FOREIGN KEY (`fk_uid`)                    REFERENCES `users` (`uid`)
 );
 
 
